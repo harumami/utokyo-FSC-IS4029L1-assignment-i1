@@ -6,7 +6,7 @@ render(
   () => {
     const [imageSrc, setImageSrc] = createSignal<string>();
     const [sigmaSpace, setSigmaSpace] = createSignal(5);
-    const [sigmaColor, setSigmaColor] = createSignal(50);
+    const [sigmaColor, setSigmaColor] = createSignal(25);
     let imageRef: HTMLImageElement | undefined;
     let canvasRef: HTMLCanvasElement | undefined;
 
@@ -73,15 +73,15 @@ render(
                 gap: 0.5%;
               `}
             >
-              <label>Or use a default image</label>
+              <label>Or use</label>
               <button
                 type="button"
                 onclick={() =>
                   setImageSrc(
-                    "https://cdn.pixabay.com/photo/2025/06/11/22/12/kackar-mountains-9655201_960_720.jpg",
+                    "https://images.unsplash.com/photo-1750173588233-8cd7ba259c15?w=640",
                   )}
               >
-                https://pixabay.com/ja/photos/%E3%82%AB%E3%83%81%E3%82%AB%E3%83%AB%E5%B1%B1%E8%84%88-%E4%B8%83%E9%9D%A2%E9%B3%A5-%E8%87%AA%E7%84%B6-9655201/
+                Default image
               </button>
             </div>
           </div>
@@ -137,7 +137,7 @@ render(
               <input
                 type="number"
                 min={1}
-                max={50}
+                max={10}
                 value={sigmaSpace()}
                 onInput={(event) =>
                   setSigmaSpace(Number(event.currentTarget.value))}
@@ -145,7 +145,7 @@ render(
               <input
                 type="range"
                 min={1}
-                max={50}
+                max={10}
                 value={sigmaSpace()}
                 oninput={(event) =>
                   setSigmaSpace(Number(event.currentTarget.value))}

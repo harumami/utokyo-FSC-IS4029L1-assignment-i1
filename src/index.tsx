@@ -19,7 +19,6 @@ render(
         fallback={
           <div
             class={css`
-              width: 100%;
               height: 100%;
               box-sizing: border-box;
               padding: 0.5%;
@@ -34,9 +33,17 @@ render(
                 display: flex;
                 flex-flow: row;
                 gap: 0.5%;
+                place-items: center;
               `}
             >
-              <label>Upload an image</label>
+              <label
+                class={css`
+                  flex: 0 0;
+                  white-space: nowrap;
+                `}
+              >
+                Upload a file
+              </label>
               <input
                 type="file"
                 accept="image/*"
@@ -66,27 +73,23 @@ render(
 
                   setOriginalSrc(url);
                 }}
+                class={css`
+                  flex: 1;
+                `}
               />
             </div>
-            <div
-              class={css`
-                width: 100%;
-                display: flex;
-                flex-flow: row;
-                gap: 0.5%;
-              `}
+            <button
+              type="button"
+              onclick={() =>
+                setOriginalSrc(
+                  "https://uploads.codesandbox.io/uploads/user/user_W9aCYwvnyj5LorvmgDPm9T/15pm-rock.png",
+                )}
             >
-              <label>Or use</label>
-              <button
-                type="button"
-                onclick={() =>
-                  setOriginalSrc(
-                    "https://uploads.codesandbox.io/uploads/user/user_W9aCYwvnyj5LorvmgDPm9T/15pm-rock.png",
-                  )}
-              >
-                Default image
-              </button>
-            </div>
+              Try with a sample image
+            </button>
+            <a href="https://github.com/harumami/utokyo-FSC-IS4029L1-assignment-i1">
+              README / Repository
+            </a>
           </div>
         }
       >
@@ -105,14 +108,22 @@ render(
             class={css`
               flex: 1;
               width: 100%;
-              min-height: 0%;
               display: grid;
               grid: 1fr 1fr / 1fr 1fr;
               gap: 0.5%;
               place-items: center;
             `}
           >
-            <figure>
+            <figure
+              class={css`
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-flow: column;
+                place-items: center;
+                justify-content: center;
+              `}
+            >
               <img
                 src={originalSrc()}
                 crossorigin="anonymous"
@@ -145,54 +156,105 @@ render(
                   setOriginalSrc(undefined);
                 }}
                 class={css`
-                  width: 100%;
-                  height: 100%;
                   min-width: 0%;
                   min-height: 0%;
+                  max-width: 100%;
+                  max-height: 100%;
                   object-fit: contain;
                 `}
                 ref={originalRef}
               />
-              <figcaption>Original</figcaption>
+              <figcaption
+                class={css`
+                  flex: 0 0;
+                `}
+              >
+                Original
+              </figcaption>
             </figure>
-            <figure>
+            <figure
+              class={css`
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-flow: column;
+                place-items: center;
+                justify-content: center;
+              `}
+            >
               <canvas
                 class={css`
-                  width: 100%;
-                  height: 100%;
                   min-width: 0%;
                   min-height: 0%;
+                  max-width: 100%;
+                  max-height: 100%;
                   object-fit: contain;
                 `}
                 ref={smoothedRef}
               />
-              <figcaption>Smoothed</figcaption>
+              <figcaption
+                class={css`
+                  flex: 0 0;
+                `}
+              >
+                Smoothed
+              </figcaption>
             </figure>
-            <figure>
+            <figure
+              class={css`
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-flow: column;
+                place-items: center;
+                justify-content: center;
+              `}
+            >
               <canvas
                 class={css`
-                  width: 100%;
-                  height: 100%;
                   min-width: 0%;
                   min-height: 0%;
+                  max-width: 100%;
+                  max-height: 100%;
                   object-fit: contain;
                 `}
                 ref={detailRef}
               />
-              <figcaption>Detail</figcaption>
+              <figcaption
+                class={css`
+                  flex: 0 0;
+                `}
+              >
+                Detail
+              </figcaption>
             </figure>
-            <figure>
+            <figure
+              class={css`
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-flow: column;
+                place-items: center;
+                justify-content: center;
+              `}
+            >
               <canvas
                 class={css`
-                  width: 100%;
-                  height: 100%;
                   min-width: 0%;
                   min-height: 0%;
+                  max-width: 100%;
+                  max-height: 100%;
                   object-fit: contain;
                 `}
                 ref={enhancedRef}
               />
-              <figcaption>Enhanced</figcaption>
+              <figcaption
+                class={css`
+                  flex: 0 0;
+                `}
+              >
+                Enhanced
+              </figcaption>
             </figure>
           </div>
           <div
@@ -202,10 +264,15 @@ render(
               display: grid;
               grid: auto / auto 10% 1fr;
               gap: 0.5%;
-              align-items: center;
             `}
           >
-            <label>
+            <label
+              class={css`
+                display: flex;
+                flex-flow: row;
+                justify-content: center;
+              `}
+            >
               <math
                 innerHTML={`
                     <msub>
@@ -235,7 +302,13 @@ render(
               oninput={(event) =>
                 setSigmaSpace(Number(event.currentTarget.value))}
             />
-            <label>
+            <label
+              class={css`
+                display: flex;
+                flex-flow: row;
+                justify-content: center;
+              `}
+            >
               <math
                 innerHTML={`
                     <msub>
@@ -265,7 +338,13 @@ render(
               onInput={(event) =>
                 setSigmaRange(Number(event.currentTarget.value))}
             />
-            <label>
+            <label
+              class={css`
+                display: flex;
+                flex-flow: row;
+                justify-content: center;
+              `}
+            >
               <math
                 innerHTML={`
                     <mi>
@@ -463,10 +542,19 @@ render(
                 0,
               );
             }}
+            class={css`
+              flex: 0;
+            `}
           >
             Run
           </button>
-          <button type="button" onclick={() => setOriginalSrc(undefined)}>
+          <button
+            type="button"
+            onclick={() => setOriginalSrc(undefined)}
+            class={css`
+              flex: 0;
+            `}
+          >
             Clear
           </button>
         </div>

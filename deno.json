@@ -1,0 +1,34 @@
+{
+  "imports": {
+    "@kuma-ui/core": "npm:@kuma-ui/core@1.5.9",
+    "@kuma-ui/vite": "npm:@kuma-ui/vite@1.4.0",
+    "corvu": "npm:corvu@0.7.2",
+    "rolldown-vite": "npm:rolldown-vite@7.0.3",
+    "solid-js": "npm:solid-js@1.9.7",
+    "vite-plugin-solid": "npm:vite-plugin-solid@2.11.7"
+  },
+  "tasks": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "checkJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "lib": ["DOM"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "types": ["vite/client"],
+    "verbatimModuleSyntax": true
+  }
+}

@@ -4,10 +4,10 @@ import { css } from "@kuma-ui/core";
 
 render(
   () => {
-    const [originalSrc, setOriginalSrc] = createSignal<string>();
-    const [sigmaSpace, setSigmaSpace] = createSignal(5);
-    const [sigmaRange, setSigmaRange] = createSignal(25);
-    const [scaling, setScaling] = createSignal(2);
+    const [accessOriginalSrc, setOriginalSrc] = createSignal<string>();
+    const [accessSigmaSpace, setSigmaSpace] = createSignal(5);
+    const [accessSigmaRange, setSigmaRange] = createSignal(25);
+    const [accessScaling, setScaling] = createSignal(2);
     let originalRef: HTMLImageElement | undefined;
     let smoothedRef: HTMLCanvasElement | undefined;
     let detailRef: HTMLCanvasElement | undefined;
@@ -15,7 +15,7 @@ render(
 
     return (
       <Show
-        when={originalSrc()}
+        when={accessOriginalSrc()}
         fallback={
           <div
             class={css`
@@ -125,7 +125,7 @@ render(
               `}
             >
               <img
-                src={originalSrc()}
+                src={accessOriginalSrc()}
                 crossorigin="anonymous"
                 onload={() => {
                   if (originalRef === undefined) {
@@ -144,12 +144,14 @@ render(
                     throw Error("enhancedRef is undefined");
                   }
 
-                  smoothedRef.width = originalRef.naturalWidth;
-                  smoothedRef.height = originalRef.naturalHeight;
-                  detailRef.width = originalRef.naturalWidth;
-                  detailRef.height = originalRef.naturalHeight;
-                  enhancedRef.width = originalRef.naturalWidth;
-                  enhancedRef.height = originalRef.naturalHeight;
+                  const width = originalRef.naturalWidth;
+                  const height = originalRef.naturalHeight;
+                  smoothedRef.width = width;
+                  smoothedRef.height = height;
+                  detailRef.width = width;
+                  detailRef.height = height;
+                  enhancedRef.width = width;
+                  enhancedRef.height = height;
                 }}
                 onerror={(error) => {
                   console.log(error);
@@ -290,7 +292,7 @@ render(
               type="number"
               min={1}
               max={10}
-              value={sigmaSpace()}
+              value={accessSigmaSpace()}
               onInput={(event) =>
                 setSigmaSpace(Number(event.currentTarget.value))}
             />
@@ -298,7 +300,7 @@ render(
               type="range"
               min={1}
               max={10}
-              value={sigmaSpace()}
+              value={accessSigmaSpace()}
               oninput={(event) =>
                 setSigmaSpace(Number(event.currentTarget.value))}
             />
@@ -326,7 +328,7 @@ render(
               type="number"
               min={1}
               max={50}
-              value={sigmaRange()}
+              value={accessSigmaRange()}
               onInput={(event) =>
                 setSigmaRange(Number(event.currentTarget.value))}
             />
@@ -334,7 +336,7 @@ render(
               type="range"
               min={1}
               max={50}
-              value={sigmaRange()}
+              value={accessSigmaRange()}
               onInput={(event) =>
                 setSigmaRange(Number(event.currentTarget.value))}
             />
@@ -357,14 +359,14 @@ render(
               type="number"
               min={1}
               max={10}
-              value={scaling()}
+              value={accessScaling()}
               onInput={(event) => setScaling(Number(event.currentTarget.value))}
             />
             <input
               type="range"
               min={1}
               max={10}
-              value={scaling()}
+              value={accessScaling()}
               onInput={(event) => setScaling(Number(event.currentTarget.value))}
             />
           </div>
@@ -405,21 +407,26 @@ render(
                 throw Error("enhancedCtx is null");
               }
 
+              const width = originalRef.naturalWidth;
+              const height = originalRef.naturalHeight;
+              const sigmaSpace = accessSigmaSpace();
+              const sigmaRange = accessSigmaRange();
+              const scaling = accessScaling();
               smoothedCtx.drawImage(originalRef, 0, 0);
 
               const { data: originalData } = smoothedCtx.getImageData(
                 0,
                 0,
-                smoothedRef.width,
-                smoothedRef.height,
+                width,
+                height,
               );
 
               const smoothedData = new Uint8ClampedArray(originalData.length);
-              const radius = Math.ceil(3 * sigmaSpace());
+              const radius = Math.ceil(3 * sigmaSpace);
 
-              for (let row = 0; row < smoothedRef.width; ++row) {
-                for (let column = 0; column < smoothedRef.height; ++column) {
-                  const index = 4 * (row + column * smoothedRef.width);
+              for (let row = 0; row < width; ++row) {
+                for (let column = 0; column < height; ++column) {
+                  const index = 4 * (row + column * width);
                   let sumWeight = 0;
                   let sumRed = 0;
                   let sumGreen = 0;
@@ -435,15 +442,14 @@ render(
                       const neighborColumn = column + diffColumn;
 
                       if (
-                        neighborRow < 0 || smoothedRef.width <= neighborRow ||
-                        neighborColumn < 0 ||
-                        smoothedRef.height <= neighborColumn
+                        neighborRow < 0 || width <= neighborRow ||
+                        neighborColumn < 0 || height <= neighborColumn
                       ) {
                         continue;
                       }
 
                       const neighborIndex = 4 *
-                        (neighborRow + neighborColumn * smoothedRef.width);
+                        (neighborRow + neighborColumn * width);
 
                       const neighborRed = originalData[neighborIndex + 0];
                       const neighborGreen = originalData[neighborIndex + 1];
@@ -460,11 +466,11 @@ render(
 
                       const weight = Math.exp(
                         -(diffRow * diffRow + diffColumn * diffColumn) /
-                          (2 * sigmaSpace() * sigmaSpace()),
+                          (2 * sigmaSpace * sigmaSpace),
                       ) * Math.exp(
                         -(diffRed * diffRed + diffGreen * diffGreen +
                           diffBlue * diffBlue) /
-                          (2 * sigmaRange() * sigmaRange()),
+                          (2 * sigmaRange * sigmaRange),
                       );
 
                       sumWeight += weight;
@@ -484,8 +490,8 @@ render(
               smoothedCtx.putImageData(
                 new ImageData(
                   smoothedData,
-                  smoothedRef.width,
-                  smoothedRef.height,
+                  width,
+                  height,
                 ),
                 0,
                 0,
@@ -493,9 +499,9 @@ render(
 
               const detailData = new Uint8ClampedArray(originalData.length);
 
-              for (let row = 0; row < detailRef.width; ++row) {
-                for (let column = 0; column < detailRef.height; ++column) {
-                  const index = 4 * (row + column * detailRef.width);
+              for (let row = 0; row < width; ++row) {
+                for (let column = 0; column < height; ++column) {
+                  const index = 4 * (row + column * width);
 
                   for (let color = 0; color < 3; ++color) {
                     detailData[index + color] = 128 +
@@ -510,8 +516,8 @@ render(
               detailCtx.putImageData(
                 new ImageData(
                   detailData,
-                  detailRef.width,
-                  detailRef.height,
+                  width,
+                  height,
                 ),
                 0,
                 0,
@@ -519,13 +525,13 @@ render(
 
               const enhancedData = new Uint8ClampedArray(originalData.length);
 
-              for (let row = 0; row < enhancedRef.width; ++row) {
-                for (let column = 0; column < enhancedRef.height; ++column) {
-                  const index = 4 * (row + column * enhancedRef.width);
+              for (let row = 0; row < width; ++row) {
+                for (let column = 0; column < height; ++column) {
+                  const index = 4 * (row + column * width);
 
                   for (let color = 0; color < 3; ++color) {
                     enhancedData[index + color] = smoothedData[index + color] +
-                      scaling() * (detailData[index + color] - 128);
+                      scaling * (detailData[index + color] - 128);
                   }
 
                   enhancedData[index + 3] = originalData[index + 3];
@@ -535,8 +541,8 @@ render(
               enhancedCtx.putImageData(
                 new ImageData(
                   enhancedData,
-                  enhancedRef.width,
-                  enhancedRef.height,
+                  width,
+                  height,
                 ),
                 0,
                 0,
